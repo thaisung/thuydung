@@ -160,6 +160,7 @@ Lưu ý:  Mọi câu lệnh Postgres PHẢI kết thúc bằng dấu chấm ph�
 Tạo người dùng cơ sở dữ liệu cho dự án của chúng tôi. Đảm bảo chọn mật khẩu an toàn.
 
 CREATE USER postgres WITH PASSWORD 'admin';|||
+ALTER USER postgres WITH PASSWORD 'admin';
 
 Lưu ý: Người dùng cơ sở dữ liệu ở đây là 'postgres' và mật khẩu là 'admin'
 
@@ -177,7 +178,7 @@ ALTER ROLE postgres SET timezone TO 'UTC';|||
 
 Bây giờ, hãy cung cấp cho người dùng cơ sở dữ liệu của chúng tôi 'postgres' để có tất cả các đặc quyền trong cơ sở dữ liệu 'sleeksoft' .
 
-GRANT ALL PRIVILEGES ON DATABASE Nguyen_Duc TO postgres;|||
+GRANT ALL PRIVILEGES ON DATABASE thuydung TO postgres;|||
 
 Bây giờ chúng tôi đã tạo thành công cơ sở dữ liệu và người dùng cơ sở dữ liệu có tất cả các đặc quyền đối với cơ sở dữ liệu mà chúng tôi đã tạo trong PostgreSQL. Thoát khỏi môi trường Postgres.
 
@@ -247,6 +248,12 @@ Hãy thực hiện quá trình di chuyển ban đầu, thao tác này sẽ thi�
 
 cd sleeksoft/|||
 python3 manage.py makemigrations|||
+pip install django-environ
+pip install django-tailwind
+pip install django-browser-reload
+pip install django-ckeditor
+pip install requests
+
 python3 manage.py migrate|||
 Bây giờ, hãy tạo một siêu người dùng cho trang web của chúng tôi.
 
